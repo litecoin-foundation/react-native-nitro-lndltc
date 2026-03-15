@@ -1,1 +1,1 @@
-// TODO: Export all HybridObjects here for the user
+export type { Lnd, Subscription } from './specs/Lnd.nitro'

@@ -10,17 +10,21 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported, :visionos => 1.0 }
-  s.source       = { :git => "https://github.com/mrousavy/nitro.git", :tag => "#{s.version}" }
+  s.platforms    = { :ios => min_ios_version_supported }
+  s.source       = { :git => "https://github.com/litecoin-foundation/react-native-nitro-lndltc.git", :tag => "#{s.version}" }
 
   s.source_files = [
-    # Implementation (Swift)
-    "ios/**/*.{swift}",
     # Autolinking/Registration (Objective-C++)
     "ios/**/*.{m,mm}",
     # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
   ]
+
+  s.pod_target_xcconfig = {
+    "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
+    "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/cpp\"",
+    "OTHER_LDFLAGS" => "-lresolv",
+  }
 
   load 'nitrogen/generated/ios/NitroLndltc+autolinking.rb'
   add_nitrogen_files(s)

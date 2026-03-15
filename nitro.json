@@ -12,7 +12,20 @@
     ],
     "androidCxxLibName": "NitroLndltc"
   },
-  "autolinking": {},
+  "autolinking": {
+    "Lnd": {
+      "all": {
+        "language": "c++",
+        "implementationClassName": "HybridLnd"
+      }
+    },
+    "Subscription": {
+      "all": {
+        "language": "c++",
+        "implementationClassName": "HybridSubscription"
+      }
+    }
+  },
   "ignorePaths": [
     "**/node_modules"
   ]
