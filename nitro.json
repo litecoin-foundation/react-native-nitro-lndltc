@@ -1,0 +1,19 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": [
+    "nitrolndltc"
+  ],
+  "ios": {
+    "iosModuleName": "NitroLndltc"
+  },
+  "android": {
+    "androidNamespace": [
+      "nitrolndltc"
+    ],
+    "androidCxxLibName": "NitroLndltc"
+  },
+  "autolinking": {},
+  "ignorePaths": [
+    "**/node_modules"
+  ]
+}
