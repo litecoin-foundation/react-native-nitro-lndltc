@@ -55,6 +55,7 @@ namespace margelo::nitro::nitrolndltc {
     public:
       // Methods
       virtual std::shared_ptr<Promise<void>> start(const std::string& args) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> genSeed(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> initWallet(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> unlockWallet(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletBalance(const std::shared_ptr<ArrayBuffer>& data) = 0;
@@ -65,8 +66,17 @@ namespace margelo::nitro::nitrolndltc {
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> stopDaemon(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> getTransactions(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> sendCoins(const std::shared_ptr<ArrayBuffer>& data) = 0;
-      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportAccount(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListAccounts(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListAddresses(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListLeases(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListUnspent(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitReleaseOutput(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitPublishTransaction(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitSignMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitVerifyMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitSignPsbt(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFundPsbt(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFinalizePsbt(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportMwebScanKey(const std::shared_ptr<ArrayBuffer>& data) = 0;

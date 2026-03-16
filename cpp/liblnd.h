@@ -29,6 +29,7 @@ extern void start(char* extraArgs, CCallback callback);
 extern void stopDaemon(char* data, int length, CCallback callback);
 
 // WalletUnlocker subserver
+extern void genSeed(char* data, int length, CCallback callback);
 extern void initWallet(char* data, int length, CCallback callback);
 extern void unlockWallet(char* data, int length, CCallback callback);
 
@@ -46,8 +47,17 @@ extern void subscribeState(char* data, int length, CRecvStream rStream);
 extern void subscribeTransactions(char* data, int length, CRecvStream rStream);
 
 // WalletKit subserver
-extern void walletKitLabelTransaction(char* data, int length, CCallback callback);
+extern void walletKitImportAccount(char* data, int length, CCallback callback);
+extern void walletKitListAccounts(char* data, int length, CCallback callback);
+extern void walletKitListAddresses(char* data, int length, CCallback callback);
+extern void walletKitListLeases(char* data, int length, CCallback callback);
 extern void walletKitListUnspent(char* data, int length, CCallback callback);
+extern void walletKitLabelTransaction(char* data, int length, CCallback callback);
+extern void walletKitReleaseOutput(char* data, int length, CCallback callback);
+extern void walletKitPublishTransaction(char* data, int length, CCallback callback);
+extern void walletKitSignMessageWithAddr(char* data, int length, CCallback callback);
+extern void walletKitVerifyMessageWithAddr(char* data, int length, CCallback callback);
+extern void walletKitSignPsbt(char* data, int length, CCallback callback);
 extern void walletKitFundPsbt(char* data, int length, CCallback callback);
 extern void walletKitFinalizePsbt(char* data, int length, CCallback callback);
 extern void walletKitImportMwebScanKey(char* data, int length, CCallback callback);

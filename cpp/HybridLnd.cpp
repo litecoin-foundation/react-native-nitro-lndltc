@@ -79,6 +79,11 @@ HybridLnd::start(const std::string& args) {
 // WalletUnlocker subserver
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::genSeed(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::genSeed, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
 HybridLnd::initWallet(const std::shared_ptr<ArrayBuffer>& data) {
     return callUnaryRpc(::initWallet, data);
 }
@@ -133,13 +138,58 @@ HybridLnd::sendCoins(const std::shared_ptr<ArrayBuffer>& data) {
 // WalletKit subserver
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
-HybridLnd::walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) {
-    return callUnaryRpc(::walletKitLabelTransaction, data);
+HybridLnd::walletKitImportAccount(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitImportAccount, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitListAccounts(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitListAccounts, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitListAddresses(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitListAddresses, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitListLeases(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitListLeases, data);
 }
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
 HybridLnd::walletKitListUnspent(const std::shared_ptr<ArrayBuffer>& data) {
     return callUnaryRpc(::walletKitListUnspent, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitLabelTransaction, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitReleaseOutput(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitReleaseOutput, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitPublishTransaction(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitPublishTransaction, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitSignMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitSignMessageWithAddr, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitVerifyMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitVerifyMessageWithAddr, data);
+}
+
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitSignPsbt(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitSignPsbt, data);
 }
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>

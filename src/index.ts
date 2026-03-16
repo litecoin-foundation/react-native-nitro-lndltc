@@ -29,6 +29,8 @@ import {
 
 // proto schemas - WalletUnlocker
 import {
+  GenSeedRequestSchema,
+  GenSeedResponseSchema,
   InitWalletRequestSchema,
   InitWalletResponseSchema,
   UnlockWalletRequestSchema,
@@ -43,10 +45,28 @@ import {
 
 // proto schemas - WalletKit
 import {
-  LabelTransactionRequestSchema,
-  LabelTransactionResponseSchema,
+  ImportAccountRequestSchema,
+  ImportAccountResponseSchema,
+  ListAccountsRequestSchema,
+  ListAccountsResponseSchema,
+  ListAddressesRequestSchema,
+  ListAddressesResponseSchema,
+  ListLeasesRequestSchema,
+  ListLeasesResponseSchema,
   ListUnspentRequestSchema as WalletKitListUnspentRequestSchema,
   ListUnspentResponseSchema as WalletKitListUnspentResponseSchema,
+  LabelTransactionRequestSchema,
+  LabelTransactionResponseSchema,
+  ReleaseOutputRequestSchema,
+  ReleaseOutputResponseSchema,
+  TransactionSchema as WalletKitTransactionSchema,
+  PublishResponseSchema,
+  SignMessageWithAddrRequestSchema,
+  SignMessageWithAddrResponseSchema,
+  VerifyMessageWithAddrRequestSchema,
+  VerifyMessageWithAddrResponseSchema,
+  SignPsbtRequestSchema,
+  SignPsbtResponseSchema,
   FundPsbtRequestSchema,
   FundPsbtResponseSchema,
   FinalizePsbtRequestSchema,
@@ -56,9 +76,7 @@ import {
 } from './proto/walletrpc/walletkit_pb'
 
 // proto schemas - NeutrinoKit
-import {
-  StatusResponseSchema as NeutrinoStatusResponseSchema,
-} from './proto/neutrinorpc/neutrino_pb'
+import { StatusResponseSchema as NeutrinoStatusResponseSchema } from './proto/neutrinorpc/neutrino_pb'
 
 // re-export proto types for consumers
 export type {
@@ -84,12 +102,11 @@ export type {
   PreviousOutPoint,
 } from './proto/lightning_pb'
 
-export {
-  AddressType,
-  OutputScriptType,
-} from './proto/lightning_pb'
+export { AddressType, OutputScriptType } from './proto/lightning_pb'
 
 export type {
+  GenSeedRequest,
+  GenSeedResponse,
   InitWalletRequest,
   InitWalletResponse,
   UnlockWalletRequest,
@@ -104,8 +121,25 @@ export type {
 export { WalletState } from './proto/stateservice_pb'
 
 export type {
+  ImportAccountRequest,
+  ImportAccountResponse,
+  ListAccountsRequest,
+  ListAccountsResponse,
+  ListAddressesRequest,
+  ListAddressesResponse,
+  ListLeasesRequest,
+  ListLeasesResponse,
   LabelTransactionRequest,
   LabelTransactionResponse,
+  ReleaseOutputRequest,
+  ReleaseOutputResponse,
+  PublishResponse,
+  SignMessageWithAddrRequest,
+  SignMessageWithAddrResponse,
+  VerifyMessageWithAddrRequest,
+  VerifyMessageWithAddrResponse,
+  SignPsbtRequest,
+  SignPsbtResponse,
   FundPsbtRequest,
   FundPsbtResponse,
   FinalizePsbtRequest,
@@ -151,6 +185,17 @@ export function start(args: string): Promise<void> {
 }
 
 // WalletUnlocker subserver
+
+export async function genSeed(
+  request: MessageInitShape<typeof GenSeedRequestSchema> = {}
+) {
+  const bytes = toBinary(
+    GenSeedRequestSchema,
+    create(GenSeedRequestSchema, request)
+  )
+  const response = await getLnd().genSeed(toArrayBuffer(bytes))
+  return fromBinary(GenSeedResponseSchema, new Uint8Array(response))
+}
 
 export async function initWallet(
   request: MessageInitShape<typeof InitWalletRequestSchema>
@@ -248,17 +293,48 @@ export async function sendCoins(
 
 // WalletKit subserver
 
-export async function walletKitLabelTransaction(
-  request: MessageInitShape<typeof LabelTransactionRequestSchema>
+export async function walletKitImportAccount(
+  request: MessageInitShape<typeof ImportAccountRequestSchema>
 ) {
   const bytes = toBinary(
-    LabelTransactionRequestSchema,
-    create(LabelTransactionRequestSchema, request)
+    ImportAccountRequestSchema,
+    create(ImportAccountRequestSchema, request)
   )
-  const response = await getLnd().walletKitLabelTransaction(
-    toArrayBuffer(bytes)
+  const response = await getLnd().walletKitImportAccount(toArrayBuffer(bytes))
+  return fromBinary(ImportAccountResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitListAccounts(
+  request: MessageInitShape<typeof ListAccountsRequestSchema> = {}
+) {
+  const bytes = toBinary(
+    ListAccountsRequestSchema,
+    create(ListAccountsRequestSchema, request)
   )
-  return fromBinary(LabelTransactionResponseSchema, new Uint8Array(response))
+  const response = await getLnd().walletKitListAccounts(toArrayBuffer(bytes))
+  return fromBinary(ListAccountsResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitListAddresses(
+  request: MessageInitShape<typeof ListAddressesRequestSchema> = {}
+) {
+  const bytes = toBinary(
+    ListAddressesRequestSchema,
+    create(ListAddressesRequestSchema, request)
+  )
+  const response = await getLnd().walletKitListAddresses(toArrayBuffer(bytes))
+  return fromBinary(ListAddressesResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitListLeases(
+  request: MessageInitShape<typeof ListLeasesRequestSchema> = {}
+) {
+  const bytes = toBinary(
+    ListLeasesRequestSchema,
+    create(ListLeasesRequestSchema, request)
+  )
+  const response = await getLnd().walletKitListLeases(toArrayBuffer(bytes))
+  return fromBinary(ListLeasesResponseSchema, new Uint8Array(response))
 }
 
 export async function walletKitListUnspent(
@@ -273,6 +349,83 @@ export async function walletKitListUnspent(
     WalletKitListUnspentResponseSchema,
     new Uint8Array(response)
   )
+}
+
+export async function walletKitLabelTransaction(
+  request: MessageInitShape<typeof LabelTransactionRequestSchema>
+) {
+  const bytes = toBinary(
+    LabelTransactionRequestSchema,
+    create(LabelTransactionRequestSchema, request)
+  )
+  const response = await getLnd().walletKitLabelTransaction(
+    toArrayBuffer(bytes)
+  )
+  return fromBinary(LabelTransactionResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitReleaseOutput(
+  request: MessageInitShape<typeof ReleaseOutputRequestSchema>
+) {
+  const bytes = toBinary(
+    ReleaseOutputRequestSchema,
+    create(ReleaseOutputRequestSchema, request)
+  )
+  const response = await getLnd().walletKitReleaseOutput(toArrayBuffer(bytes))
+  return fromBinary(ReleaseOutputResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitPublishTransaction(
+  request: MessageInitShape<typeof WalletKitTransactionSchema>
+) {
+  const bytes = toBinary(
+    WalletKitTransactionSchema,
+    create(WalletKitTransactionSchema, request)
+  )
+  const response = await getLnd().walletKitPublishTransaction(
+    toArrayBuffer(bytes)
+  )
+  return fromBinary(PublishResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitSignMessageWithAddr(
+  request: MessageInitShape<typeof SignMessageWithAddrRequestSchema>
+) {
+  const bytes = toBinary(
+    SignMessageWithAddrRequestSchema,
+    create(SignMessageWithAddrRequestSchema, request)
+  )
+  const response = await getLnd().walletKitSignMessageWithAddr(
+    toArrayBuffer(bytes)
+  )
+  return fromBinary(SignMessageWithAddrResponseSchema, new Uint8Array(response))
+}
+
+export async function walletKitVerifyMessageWithAddr(
+  request: MessageInitShape<typeof VerifyMessageWithAddrRequestSchema>
+) {
+  const bytes = toBinary(
+    VerifyMessageWithAddrRequestSchema,
+    create(VerifyMessageWithAddrRequestSchema, request)
+  )
+  const response = await getLnd().walletKitVerifyMessageWithAddr(
+    toArrayBuffer(bytes)
+  )
+  return fromBinary(
+    VerifyMessageWithAddrResponseSchema,
+    new Uint8Array(response)
+  )
+}
+
+export async function walletKitSignPsbt(
+  request: MessageInitShape<typeof SignPsbtRequestSchema>
+) {
+  const bytes = toBinary(
+    SignPsbtRequestSchema,
+    create(SignPsbtRequestSchema, request)
+  )
+  const response = await getLnd().walletKitSignPsbt(toArrayBuffer(bytes))
+  return fromBinary(SignPsbtResponseSchema, new Uint8Array(response))
 }
 
 export async function walletKitFundPsbt(

@@ -11,7 +11,6 @@
 #import <type_traits>
 
 #include "HybridLnd.hpp"
-#include "HybridSubscription.hpp"
 
 @interface NitroLndltcAutolinking : NSObject
 @end
@@ -29,15 +28,6 @@
                     "The HybridObject \"HybridLnd\" is not default-constructible! "
                     "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
       return std::make_shared<HybridLnd>();
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "Subscription",
-    []() -> std::shared_ptr<HybridObject> {
-      static_assert(std::is_default_constructible_v<HybridSubscription>,
-                    "The HybridObject \"HybridSubscription\" is not default-constructible! "
-                    "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
-      return std::make_shared<HybridSubscription>();
     }
   );
 }

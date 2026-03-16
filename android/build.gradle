@@ -49,7 +49,12 @@ android {
     externalNativeBuild {
       cmake {
         cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
-        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        // LND_JNILIBS_PATH: consumer app sets this, or we find it from rootProject
+        def lndJniLibsPath = rootProject.hasProperty("LND_JNILIBS_PATH")
+            ? rootProject.property("LND_JNILIBS_PATH")
+            : "${rootProject.projectDir}/app/src/main/jniLibs"
+        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+            "-DLND_JNILIBS_PATH=${lndJniLibsPath}"
         abiFilters (*reactNativeArchitectures())
 
         buildTypes {

@@ -14,6 +14,7 @@ public:
     std::shared_ptr<Promise<void>> start(const std::string& args) override;
 
     // WalletUnlocker subserver
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> genSeed(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> initWallet(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> unlockWallet(const std::shared_ptr<ArrayBuffer>& data) override;
 
@@ -28,8 +29,17 @@ public:
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> sendCoins(const std::shared_ptr<ArrayBuffer>& data) override;
 
     // WalletKit subserver
-    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportAccount(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListAccounts(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListAddresses(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListLeases(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitListUnspent(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitLabelTransaction(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitReleaseOutput(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitPublishTransaction(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitSignMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitVerifyMessageWithAddr(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitSignPsbt(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFundPsbt(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFinalizePsbt(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportMwebScanKey(const std::shared_ptr<ArrayBuffer>& data) override;

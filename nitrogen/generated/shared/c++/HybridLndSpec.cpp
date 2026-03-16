@@ -15,6 +15,7 @@ namespace margelo::nitro::nitrolndltc {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("start", &HybridLndSpec::start);
+      prototype.registerHybridMethod("genSeed", &HybridLndSpec::genSeed);
       prototype.registerHybridMethod("initWallet", &HybridLndSpec::initWallet);
       prototype.registerHybridMethod("unlockWallet", &HybridLndSpec::unlockWallet);
       prototype.registerHybridMethod("walletBalance", &HybridLndSpec::walletBalance);
@@ -25,8 +26,17 @@ namespace margelo::nitro::nitrolndltc {
       prototype.registerHybridMethod("stopDaemon", &HybridLndSpec::stopDaemon);
       prototype.registerHybridMethod("getTransactions", &HybridLndSpec::getTransactions);
       prototype.registerHybridMethod("sendCoins", &HybridLndSpec::sendCoins);
-      prototype.registerHybridMethod("walletKitLabelTransaction", &HybridLndSpec::walletKitLabelTransaction);
+      prototype.registerHybridMethod("walletKitImportAccount", &HybridLndSpec::walletKitImportAccount);
+      prototype.registerHybridMethod("walletKitListAccounts", &HybridLndSpec::walletKitListAccounts);
+      prototype.registerHybridMethod("walletKitListAddresses", &HybridLndSpec::walletKitListAddresses);
+      prototype.registerHybridMethod("walletKitListLeases", &HybridLndSpec::walletKitListLeases);
       prototype.registerHybridMethod("walletKitListUnspent", &HybridLndSpec::walletKitListUnspent);
+      prototype.registerHybridMethod("walletKitLabelTransaction", &HybridLndSpec::walletKitLabelTransaction);
+      prototype.registerHybridMethod("walletKitReleaseOutput", &HybridLndSpec::walletKitReleaseOutput);
+      prototype.registerHybridMethod("walletKitPublishTransaction", &HybridLndSpec::walletKitPublishTransaction);
+      prototype.registerHybridMethod("walletKitSignMessageWithAddr", &HybridLndSpec::walletKitSignMessageWithAddr);
+      prototype.registerHybridMethod("walletKitVerifyMessageWithAddr", &HybridLndSpec::walletKitVerifyMessageWithAddr);
+      prototype.registerHybridMethod("walletKitSignPsbt", &HybridLndSpec::walletKitSignPsbt);
       prototype.registerHybridMethod("walletKitFundPsbt", &HybridLndSpec::walletKitFundPsbt);
       prototype.registerHybridMethod("walletKitFinalizePsbt", &HybridLndSpec::walletKitFinalizePsbt);
       prototype.registerHybridMethod("walletKitImportMwebScanKey", &HybridLndSpec::walletKitImportMwebScanKey);

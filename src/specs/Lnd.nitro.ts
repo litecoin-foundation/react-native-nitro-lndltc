@@ -22,6 +22,7 @@ export interface Lnd extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   start(args: string): Promise<void>
 
   // WalletUnlocker subserver
+  genSeed(data: ArrayBuffer): Promise<ArrayBuffer>
   initWallet(data: ArrayBuffer): Promise<ArrayBuffer>
   unlockWallet(data: ArrayBuffer): Promise<ArrayBuffer>
 
@@ -36,8 +37,17 @@ export interface Lnd extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   sendCoins(data: ArrayBuffer): Promise<ArrayBuffer>
 
   // WalletKit subserver
-  walletKitLabelTransaction(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitImportAccount(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitListAccounts(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitListAddresses(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitListLeases(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitListUnspent(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitLabelTransaction(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitReleaseOutput(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitPublishTransaction(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitSignMessageWithAddr(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitVerifyMessageWithAddr(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitSignPsbt(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitFundPsbt(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitFinalizePsbt(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitImportMwebScanKey(data: ArrayBuffer): Promise<ArrayBuffer>
