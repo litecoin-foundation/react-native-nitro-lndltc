@@ -11,6 +11,16 @@ namespace margelo::nitro::nitrolndltc {
 using namespace margelo::nitro;
 
 // Heap-allocated context passed through Go's void* callback pointers.
+inline std::exception_ptr makeRpcError(const char* error) {
+    std::exception_ptr ep;
+    try {
+        throw std::runtime_error(error ? std::string(error) : "unknown RPC error");
+    } catch (...) {
+        ep = std::current_exception();
+    }
+    return ep;
+}
+
 struct UnaryContext {
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> promise;
 
@@ -26,8 +36,7 @@ struct UnaryContext {
 
     static void onError(void* ctx, const char* error) {
         auto* self = static_cast<UnaryContext*>(ctx);
-        self->promise->reject(std::make_exception_ptr(
-            std::runtime_error(std::string(error))));
+        self->promise->reject(makeRpcError(error));
         delete self;
     }
 };
@@ -43,8 +52,7 @@ struct VoidContext {
 
     static void onError(void* ctx, const char* error) {
         auto* self = static_cast<VoidContext*>(ctx);
-        self->promise->reject(std::make_exception_ptr(
-            std::runtime_error(std::string(error))));
+        self->promise->reject(makeRpcError(error));
         delete self;
     }
 };

@@ -171,9 +171,9 @@ export default function DaemonScreen() {
   const handleStop = async () => {
     try {
       log('Stopping daemon...')
-      await stopDaemon()
       subscriptionRef.current?.cancel()
       subscriptionRef.current = null
+      await stopDaemon()
       setPhase('stopped')
       setRawState(null)
       log('Daemon stopped')

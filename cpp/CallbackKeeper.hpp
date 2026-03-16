@@ -37,8 +37,10 @@ struct StreamContext {
         auto* self = static_cast<StreamContext*>(ctx);
         // Invoke error callback only if not cancelled.
         if (!self->cancelled->load() && self->onError) {
-            self->onError(std::string(error));
+            self->onError(error ? std::string(error) : std::string("unknown stream error"));
         }
+        // Prevent any in-flight onResponseCb from dispatching after delete.
+        self->cancelled->store(true);
         // Always delete: Go's read-stream loop exits permanently on error,
         // so no more callbacks will arrive for this context.
         delete self;

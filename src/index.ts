@@ -178,296 +178,362 @@ function toArrayBuffer(uint8: Uint8Array): ArrayBuffer {
 
 const EMPTY_BUFFER = new ArrayBuffer(0)
 
+// Defensive error wrapper for unary RPCs.
+function rpcCall<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  return fn().catch((e: any) => {
+    const msg = e?.message ?? String(e)
+    if (msg.includes('Unknown') && msg.includes('error')) {
+      throw new Error(`${name}: ${msg}`)
+    }
+    throw e
+  })
+}
+
 // daemon lifecycle
 
 export function start(args: string): Promise<void> {
-  return getLnd().start(args)
+  return rpcCall('start', () => getLnd().start(args))
 }
 
 // WalletUnlocker subserver
 
-export async function genSeed(
+export function genSeed(
   request: MessageInitShape<typeof GenSeedRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    GenSeedRequestSchema,
-    create(GenSeedRequestSchema, request)
-  )
-  const response = await getLnd().genSeed(toArrayBuffer(bytes))
-  return fromBinary(GenSeedResponseSchema, new Uint8Array(response))
+  return rpcCall('genSeed', async () => {
+    const bytes = toBinary(
+      GenSeedRequestSchema,
+      create(GenSeedRequestSchema, request)
+    )
+    const response = await getLnd().genSeed(toArrayBuffer(bytes))
+    return fromBinary(GenSeedResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function initWallet(
+export function initWallet(
   request: MessageInitShape<typeof InitWalletRequestSchema>
 ) {
-  const bytes = toBinary(
-    InitWalletRequestSchema,
-    create(InitWalletRequestSchema, request)
-  )
-  const response = await getLnd().initWallet(toArrayBuffer(bytes))
-  return fromBinary(InitWalletResponseSchema, new Uint8Array(response))
+  return rpcCall('initWallet', async () => {
+    const bytes = toBinary(
+      InitWalletRequestSchema,
+      create(InitWalletRequestSchema, request)
+    )
+    const response = await getLnd().initWallet(toArrayBuffer(bytes))
+    return fromBinary(InitWalletResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function unlockWallet(
+export function unlockWallet(
   request: MessageInitShape<typeof UnlockWalletRequestSchema>
 ) {
-  const bytes = toBinary(
-    UnlockWalletRequestSchema,
-    create(UnlockWalletRequestSchema, request)
-  )
-  const response = await getLnd().unlockWallet(toArrayBuffer(bytes))
-  return fromBinary(UnlockWalletResponseSchema, new Uint8Array(response))
+  return rpcCall('unlockWallet', async () => {
+    const bytes = toBinary(
+      UnlockWalletRequestSchema,
+      create(UnlockWalletRequestSchema, request)
+    )
+    const response = await getLnd().unlockWallet(toArrayBuffer(bytes))
+    return fromBinary(UnlockWalletResponseSchema, new Uint8Array(response))
+  })
 }
 
 // Lightning subserver
 
-export async function walletBalance(
+export function walletBalance(
   request: MessageInitShape<typeof WalletBalanceRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    WalletBalanceRequestSchema,
-    create(WalletBalanceRequestSchema, request)
-  )
-  const response = await getLnd().walletBalance(toArrayBuffer(bytes))
-  return fromBinary(WalletBalanceResponseSchema, new Uint8Array(response))
+  return rpcCall('walletBalance', async () => {
+    const bytes = toBinary(
+      WalletBalanceRequestSchema,
+      create(WalletBalanceRequestSchema, request)
+    )
+    const response = await getLnd().walletBalance(toArrayBuffer(bytes))
+    return fromBinary(WalletBalanceResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function estimateFee(
+export function estimateFee(
   request: MessageInitShape<typeof EstimateFeeRequestSchema>
 ) {
-  const bytes = toBinary(
-    EstimateFeeRequestSchema,
-    create(EstimateFeeRequestSchema, request)
-  )
-  const response = await getLnd().estimateFee(toArrayBuffer(bytes))
-  return fromBinary(EstimateFeeResponseSchema, new Uint8Array(response))
+  return rpcCall('estimateFee', async () => {
+    const bytes = toBinary(
+      EstimateFeeRequestSchema,
+      create(EstimateFeeRequestSchema, request)
+    )
+    const response = await getLnd().estimateFee(toArrayBuffer(bytes))
+    return fromBinary(EstimateFeeResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function newAddress(
+export function newAddress(
   request: MessageInitShape<typeof NewAddressRequestSchema>
 ) {
-  const bytes = toBinary(
-    NewAddressRequestSchema,
-    create(NewAddressRequestSchema, request)
-  )
-  const response = await getLnd().newAddress(toArrayBuffer(bytes))
-  return fromBinary(NewAddressResponseSchema, new Uint8Array(response))
+  return rpcCall('newAddress', async () => {
+    const bytes = toBinary(
+      NewAddressRequestSchema,
+      create(NewAddressRequestSchema, request)
+    )
+    const response = await getLnd().newAddress(toArrayBuffer(bytes))
+    return fromBinary(NewAddressResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function getInfo() {
-  const response = await getLnd().getInfo(EMPTY_BUFFER)
-  return fromBinary(GetInfoResponseSchema, new Uint8Array(response))
+export function getInfo() {
+  return rpcCall('getInfo', async () => {
+    const response = await getLnd().getInfo(EMPTY_BUFFER)
+    return fromBinary(GetInfoResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function getRecoveryInfo() {
-  const response = await getLnd().getRecoveryInfo(EMPTY_BUFFER)
-  return fromBinary(GetRecoveryInfoResponseSchema, new Uint8Array(response))
+export function getRecoveryInfo() {
+  return rpcCall('getRecoveryInfo', async () => {
+    const response = await getLnd().getRecoveryInfo(EMPTY_BUFFER)
+    return fromBinary(GetRecoveryInfoResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function stopDaemon() {
-  const response = await getLnd().stopDaemon(EMPTY_BUFFER)
-  return fromBinary(StopResponseSchema, new Uint8Array(response))
+export function stopDaemon() {
+  return rpcCall('stopDaemon', async () => {
+    const response = await getLnd().stopDaemon(EMPTY_BUFFER)
+    return fromBinary(StopResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function getTransactions(
+export function getTransactions(
   request: MessageInitShape<typeof GetTransactionsRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    GetTransactionsRequestSchema,
-    create(GetTransactionsRequestSchema, request)
-  )
-  const response = await getLnd().getTransactions(toArrayBuffer(bytes))
-  return fromBinary(TransactionDetailsSchema, new Uint8Array(response))
+  return rpcCall('getTransactions', async () => {
+    const bytes = toBinary(
+      GetTransactionsRequestSchema,
+      create(GetTransactionsRequestSchema, request)
+    )
+    const response = await getLnd().getTransactions(toArrayBuffer(bytes))
+    return fromBinary(TransactionDetailsSchema, new Uint8Array(response))
+  })
 }
 
-export async function sendCoins(
+export function sendCoins(
   request: MessageInitShape<typeof SendCoinsRequestSchema>
 ) {
-  const bytes = toBinary(
-    SendCoinsRequestSchema,
-    create(SendCoinsRequestSchema, request)
-  )
-  const response = await getLnd().sendCoins(toArrayBuffer(bytes))
-  return fromBinary(SendCoinsResponseSchema, new Uint8Array(response))
+  return rpcCall('sendCoins', async () => {
+    const bytes = toBinary(
+      SendCoinsRequestSchema,
+      create(SendCoinsRequestSchema, request)
+    )
+    const response = await getLnd().sendCoins(toArrayBuffer(bytes))
+    return fromBinary(SendCoinsResponseSchema, new Uint8Array(response))
+  })
 }
 
 // WalletKit subserver
 
-export async function walletKitImportAccount(
+export function walletKitImportAccount(
   request: MessageInitShape<typeof ImportAccountRequestSchema>
 ) {
-  const bytes = toBinary(
-    ImportAccountRequestSchema,
-    create(ImportAccountRequestSchema, request)
-  )
-  const response = await getLnd().walletKitImportAccount(toArrayBuffer(bytes))
-  return fromBinary(ImportAccountResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitImportAccount', async () => {
+    const bytes = toBinary(
+      ImportAccountRequestSchema,
+      create(ImportAccountRequestSchema, request)
+    )
+    const response = await getLnd().walletKitImportAccount(toArrayBuffer(bytes))
+    return fromBinary(ImportAccountResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitListAccounts(
+export function walletKitListAccounts(
   request: MessageInitShape<typeof ListAccountsRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    ListAccountsRequestSchema,
-    create(ListAccountsRequestSchema, request)
-  )
-  const response = await getLnd().walletKitListAccounts(toArrayBuffer(bytes))
-  return fromBinary(ListAccountsResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitListAccounts', async () => {
+    const bytes = toBinary(
+      ListAccountsRequestSchema,
+      create(ListAccountsRequestSchema, request)
+    )
+    const response = await getLnd().walletKitListAccounts(toArrayBuffer(bytes))
+    return fromBinary(ListAccountsResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitListAddresses(
+export function walletKitListAddresses(
   request: MessageInitShape<typeof ListAddressesRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    ListAddressesRequestSchema,
-    create(ListAddressesRequestSchema, request)
-  )
-  const response = await getLnd().walletKitListAddresses(toArrayBuffer(bytes))
-  return fromBinary(ListAddressesResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitListAddresses', async () => {
+    const bytes = toBinary(
+      ListAddressesRequestSchema,
+      create(ListAddressesRequestSchema, request)
+    )
+    const response = await getLnd().walletKitListAddresses(toArrayBuffer(bytes))
+    return fromBinary(ListAddressesResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitListLeases(
+export function walletKitListLeases(
   request: MessageInitShape<typeof ListLeasesRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    ListLeasesRequestSchema,
-    create(ListLeasesRequestSchema, request)
-  )
-  const response = await getLnd().walletKitListLeases(toArrayBuffer(bytes))
-  return fromBinary(ListLeasesResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitListLeases', async () => {
+    const bytes = toBinary(
+      ListLeasesRequestSchema,
+      create(ListLeasesRequestSchema, request)
+    )
+    const response = await getLnd().walletKitListLeases(toArrayBuffer(bytes))
+    return fromBinary(ListLeasesResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitListUnspent(
+export function walletKitListUnspent(
   request: MessageInitShape<typeof WalletKitListUnspentRequestSchema> = {}
 ) {
-  const bytes = toBinary(
-    WalletKitListUnspentRequestSchema,
-    create(WalletKitListUnspentRequestSchema, request)
-  )
-  const response = await getLnd().walletKitListUnspent(toArrayBuffer(bytes))
-  return fromBinary(
-    WalletKitListUnspentResponseSchema,
-    new Uint8Array(response)
-  )
+  return rpcCall('walletKitListUnspent', async () => {
+    const bytes = toBinary(
+      WalletKitListUnspentRequestSchema,
+      create(WalletKitListUnspentRequestSchema, request)
+    )
+    const response = await getLnd().walletKitListUnspent(toArrayBuffer(bytes))
+    return fromBinary(
+      WalletKitListUnspentResponseSchema,
+      new Uint8Array(response)
+    )
+  })
 }
 
-export async function walletKitLabelTransaction(
+export function walletKitLabelTransaction(
   request: MessageInitShape<typeof LabelTransactionRequestSchema>
 ) {
-  const bytes = toBinary(
-    LabelTransactionRequestSchema,
-    create(LabelTransactionRequestSchema, request)
-  )
-  const response = await getLnd().walletKitLabelTransaction(
-    toArrayBuffer(bytes)
-  )
-  return fromBinary(LabelTransactionResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitLabelTransaction', async () => {
+    const bytes = toBinary(
+      LabelTransactionRequestSchema,
+      create(LabelTransactionRequestSchema, request)
+    )
+    const response = await getLnd().walletKitLabelTransaction(
+      toArrayBuffer(bytes)
+    )
+    return fromBinary(LabelTransactionResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitReleaseOutput(
+export function walletKitReleaseOutput(
   request: MessageInitShape<typeof ReleaseOutputRequestSchema>
 ) {
-  const bytes = toBinary(
-    ReleaseOutputRequestSchema,
-    create(ReleaseOutputRequestSchema, request)
-  )
-  const response = await getLnd().walletKitReleaseOutput(toArrayBuffer(bytes))
-  return fromBinary(ReleaseOutputResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitReleaseOutput', async () => {
+    const bytes = toBinary(
+      ReleaseOutputRequestSchema,
+      create(ReleaseOutputRequestSchema, request)
+    )
+    const response = await getLnd().walletKitReleaseOutput(toArrayBuffer(bytes))
+    return fromBinary(ReleaseOutputResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitPublishTransaction(
+export function walletKitPublishTransaction(
   request: MessageInitShape<typeof WalletKitTransactionSchema>
 ) {
-  const bytes = toBinary(
-    WalletKitTransactionSchema,
-    create(WalletKitTransactionSchema, request)
-  )
-  const response = await getLnd().walletKitPublishTransaction(
-    toArrayBuffer(bytes)
-  )
-  return fromBinary(PublishResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitPublishTransaction', async () => {
+    const bytes = toBinary(
+      WalletKitTransactionSchema,
+      create(WalletKitTransactionSchema, request)
+    )
+    const response = await getLnd().walletKitPublishTransaction(
+      toArrayBuffer(bytes)
+    )
+    return fromBinary(PublishResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitSignMessageWithAddr(
+export function walletKitSignMessageWithAddr(
   request: MessageInitShape<typeof SignMessageWithAddrRequestSchema>
 ) {
-  const bytes = toBinary(
-    SignMessageWithAddrRequestSchema,
-    create(SignMessageWithAddrRequestSchema, request)
-  )
-  const response = await getLnd().walletKitSignMessageWithAddr(
-    toArrayBuffer(bytes)
-  )
-  return fromBinary(SignMessageWithAddrResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitSignMessageWithAddr', async () => {
+    const bytes = toBinary(
+      SignMessageWithAddrRequestSchema,
+      create(SignMessageWithAddrRequestSchema, request)
+    )
+    const response = await getLnd().walletKitSignMessageWithAddr(
+      toArrayBuffer(bytes)
+    )
+    return fromBinary(
+      SignMessageWithAddrResponseSchema,
+      new Uint8Array(response)
+    )
+  })
 }
 
-export async function walletKitVerifyMessageWithAddr(
+export function walletKitVerifyMessageWithAddr(
   request: MessageInitShape<typeof VerifyMessageWithAddrRequestSchema>
 ) {
-  const bytes = toBinary(
-    VerifyMessageWithAddrRequestSchema,
-    create(VerifyMessageWithAddrRequestSchema, request)
-  )
-  const response = await getLnd().walletKitVerifyMessageWithAddr(
-    toArrayBuffer(bytes)
-  )
-  return fromBinary(
-    VerifyMessageWithAddrResponseSchema,
-    new Uint8Array(response)
-  )
+  return rpcCall('walletKitVerifyMessageWithAddr', async () => {
+    const bytes = toBinary(
+      VerifyMessageWithAddrRequestSchema,
+      create(VerifyMessageWithAddrRequestSchema, request)
+    )
+    const response = await getLnd().walletKitVerifyMessageWithAddr(
+      toArrayBuffer(bytes)
+    )
+    return fromBinary(
+      VerifyMessageWithAddrResponseSchema,
+      new Uint8Array(response)
+    )
+  })
 }
 
-export async function walletKitSignPsbt(
+export function walletKitSignPsbt(
   request: MessageInitShape<typeof SignPsbtRequestSchema>
 ) {
-  const bytes = toBinary(
-    SignPsbtRequestSchema,
-    create(SignPsbtRequestSchema, request)
-  )
-  const response = await getLnd().walletKitSignPsbt(toArrayBuffer(bytes))
-  return fromBinary(SignPsbtResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitSignPsbt', async () => {
+    const bytes = toBinary(
+      SignPsbtRequestSchema,
+      create(SignPsbtRequestSchema, request)
+    )
+    const response = await getLnd().walletKitSignPsbt(toArrayBuffer(bytes))
+    return fromBinary(SignPsbtResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitFundPsbt(
+export function walletKitFundPsbt(
   request: MessageInitShape<typeof FundPsbtRequestSchema>
 ) {
-  const bytes = toBinary(
-    FundPsbtRequestSchema,
-    create(FundPsbtRequestSchema, request)
-  )
-  const response = await getLnd().walletKitFundPsbt(toArrayBuffer(bytes))
-  return fromBinary(FundPsbtResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitFundPsbt', async () => {
+    const bytes = toBinary(
+      FundPsbtRequestSchema,
+      create(FundPsbtRequestSchema, request)
+    )
+    const response = await getLnd().walletKitFundPsbt(toArrayBuffer(bytes))
+    return fromBinary(FundPsbtResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitFinalizePsbt(
+export function walletKitFinalizePsbt(
   request: MessageInitShape<typeof FinalizePsbtRequestSchema>
 ) {
-  const bytes = toBinary(
-    FinalizePsbtRequestSchema,
-    create(FinalizePsbtRequestSchema, request)
-  )
-  const response = await getLnd().walletKitFinalizePsbt(toArrayBuffer(bytes))
-  return fromBinary(FinalizePsbtResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitFinalizePsbt', async () => {
+    const bytes = toBinary(
+      FinalizePsbtRequestSchema,
+      create(FinalizePsbtRequestSchema, request)
+    )
+    const response = await getLnd().walletKitFinalizePsbt(toArrayBuffer(bytes))
+    return fromBinary(FinalizePsbtResponseSchema, new Uint8Array(response))
+  })
 }
 
-export async function walletKitImportMwebScanKey(
+export function walletKitImportMwebScanKey(
   request: MessageInitShape<typeof ImportMwebScanKeyRequestSchema>
 ) {
-  const bytes = toBinary(
-    ImportMwebScanKeyRequestSchema,
-    create(ImportMwebScanKeyRequestSchema, request)
-  )
-  const response = await getLnd().walletKitImportMwebScanKey(
-    toArrayBuffer(bytes)
-  )
-  return fromBinary(ImportMwebScanKeyResponseSchema, new Uint8Array(response))
+  return rpcCall('walletKitImportMwebScanKey', async () => {
+    const bytes = toBinary(
+      ImportMwebScanKeyRequestSchema,
+      create(ImportMwebScanKeyRequestSchema, request)
+    )
+    const response = await getLnd().walletKitImportMwebScanKey(
+      toArrayBuffer(bytes)
+    )
+    return fromBinary(ImportMwebScanKeyResponseSchema, new Uint8Array(response))
+  })
 }
 
 // NeutrinoKit subserver
 
-export async function neutrinoKitStatus() {
-  const response = await getLnd().neutrinoKitStatus(EMPTY_BUFFER)
-  return fromBinary(NeutrinoStatusResponseSchema, new Uint8Array(response))
+export function neutrinoKitStatus() {
+  return rpcCall('neutrinoKitStatus', async () => {
+    const response = await getLnd().neutrinoKitStatus(EMPTY_BUFFER)
+    return fromBinary(NeutrinoStatusResponseSchema, new Uint8Array(response))
+  })
 }
 
 // streaming rpcs

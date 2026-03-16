@@ -42,7 +42,7 @@ extern void getRecoveryInfo(char* data, int length, CCallback callback);
 extern void getTransactions(char* data, int length, CCallback callback);
 extern void sendCoins(char* data, int length, CCallback callback);
 
-// Lightning subserver
+// streaming RPCs
 extern void subscribeState(char* data, int length, CRecvStream rStream);
 extern void subscribeTransactions(char* data, int length, CRecvStream rStream);
 

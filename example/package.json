@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-navigation/native": "^7.1.28",
     "expo": "~55.0.6",
+    "expo-build-properties": "^55.0.9",
     "expo-file-system": "^55.0.10",
     "expo-linking": "~55.0.7",
     "expo-router": "~55.0.5",
@@ -34,5 +35,8 @@
     "@types/react": "~19.2.2",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+    "hermes-compiler": "250829098.0.4"
+  }
 }
