@@ -8,8 +8,8 @@ namespace margelo::nitro::nitrolndltc {
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
 HybridLnd::callUnaryRpc(UnaryRpcFunc rpcFunc, const std::shared_ptr<ArrayBuffer>& data) {
-    auto result = std::make_shared<RpcResult<std::shared_ptr<ArrayBuffer>>>();
-    auto* ctx = new UnaryContext{result};
+    auto promise = Promise<std::shared_ptr<ArrayBuffer>>::create();
+    auto* ctx = new UnaryContext{promise};
 
     CCallback cb = {
         .onResponse = &UnaryContext::onResponse,
@@ -24,12 +24,7 @@ HybridLnd::callUnaryRpc(UnaryRpcFunc rpcFunc, const std::shared_ptr<ArrayBuffer>
         cb
     );
 
-    // Promise::async runs the lambda on NitroModules' thread pool.
-    // If result->await() throws, the throw+catch happens inside
-    // NitroModules' compilation unit, so RTTI resolves correctly.
-    return Promise<std::shared_ptr<ArrayBuffer>>::async(
-        [result]() { return result->await(); }
-    );
+    return promise;
 }
 
 std::shared_ptr<HybridSubscriptionSpec>
@@ -60,10 +55,10 @@ HybridLnd::callStreamRpc(
 
 // daemon lifecycle
 
-std::shared_ptr<Promise<void>>
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
 HybridLnd::start(const std::string& args) {
-    auto result = std::make_shared<RpcResult<void>>();
-    auto* ctx = new VoidContext{result};
+    auto promise = Promise<std::shared_ptr<ArrayBuffer>>::create();
+    auto* ctx = new VoidContext{promise};
 
     CCallback cb = {
         .onResponse = &VoidContext::onResponse,
@@ -72,12 +67,12 @@ HybridLnd::start(const std::string& args) {
         .errorContext = static_cast<void*>(ctx)
     };
 
+    // start() takes char* (mutable) - make a local copy.
+    // Go copies the string via C.GoString() before spawning a goroutine.
     std::string argsCopy = args;
     ::start(argsCopy.data(), cb);
 
-    return Promise<void>::async(
-        [result]() { result->await(); }
-    );
+    return promise;
 }
 
 // WalletUnlocker subserver

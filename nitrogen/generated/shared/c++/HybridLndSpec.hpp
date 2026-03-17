@@ -16,9 +16,9 @@
 // Forward declaration of `HybridSubscriptionSpec` to properly resolve imports.
 namespace margelo::nitro::nitrolndltc { class HybridSubscriptionSpec; }
 
+#include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <string>
-#include <NitroModules/ArrayBuffer.hpp>
 #include <memory>
 #include "HybridSubscriptionSpec.hpp"
 #include <functional>
@@ -54,7 +54,7 @@ namespace margelo::nitro::nitrolndltc {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<void>> start(const std::string& args) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> start(const std::string& args) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> genSeed(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> initWallet(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> unlockWallet(const std::shared_ptr<ArrayBuffer>& data) = 0;

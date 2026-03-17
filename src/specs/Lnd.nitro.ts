@@ -18,8 +18,8 @@ export interface Subscription extends HybridObject<{
  * Server-streaming RPCs use callbacks and return a Subscription.
  */
 export interface Lnd extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
-  // daemon lifecycle - takes plain string args
-  start(args: string): Promise<void>
+  // daemon lifecycle - takes plain string args, returns envelope ArrayBuffer
+  start(args: string): Promise<ArrayBuffer>
 
   // WalletUnlocker subserver
   genSeed(data: ArrayBuffer): Promise<ArrayBuffer>

@@ -11,7 +11,7 @@ public:
     HybridLnd() : HybridObject(TAG) {}
 
     // daemon lifecycle
-    std::shared_ptr<Promise<void>> start(const std::string& args) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> start(const std::string& args) override;
 
     // WalletUnlocker subserver
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> genSeed(const std::shared_ptr<ArrayBuffer>& data) override;
