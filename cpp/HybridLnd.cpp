@@ -206,6 +206,11 @@ HybridLnd::walletKitImportMwebScanKey(const std::shared_ptr<ArrayBuffer>& data) 
     return callUnaryRpc(::walletKitImportMwebScanKey, data);
 }
 
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+HybridLnd::walletKitPrepareMwebPresign(const std::shared_ptr<ArrayBuffer>& data) {
+    return callUnaryRpc(::walletKitPrepareMwebPresign, data);
+}
+
 // NeutrinoKit subserver
 
 std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>

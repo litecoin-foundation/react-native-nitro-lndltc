@@ -73,6 +73,8 @@ import {
   FinalizePsbtResponseSchema,
   ImportMwebScanKeyRequestSchema,
   ImportMwebScanKeyResponseSchema,
+  PrepareMwebPresignRequestSchema,
+  PrepareMwebPresignResponseSchema,
 } from './proto/walletrpc/walletkit_pb'
 
 // proto schemas - NeutrinoKit
@@ -146,6 +148,8 @@ export type {
   FinalizePsbtResponse,
   ImportMwebScanKeyRequest,
   ImportMwebScanKeyResponse,
+  PrepareMwebPresignRequest,
+  PrepareMwebPresignResponse,
 } from './proto/walletrpc/walletkit_pb'
 
 export {
@@ -337,6 +341,11 @@ export async function walletKitFinalizePsbt(request: MessageInitShape<typeof Fin
 export async function walletKitImportMwebScanKey(request: MessageInitShape<typeof ImportMwebScanKeyRequestSchema>) {
   const bytes = toBinary(ImportMwebScanKeyRequestSchema, create(ImportMwebScanKeyRequestSchema, request))
   return fromBinary(ImportMwebScanKeyResponseSchema, unwrapEnvelope(await getLnd().walletKitImportMwebScanKey(toArrayBuffer(bytes))))
+}
+
+export async function walletKitPrepareMwebPresign(request: MessageInitShape<typeof PrepareMwebPresignRequestSchema>) {
+  const bytes = toBinary(PrepareMwebPresignRequestSchema, create(PrepareMwebPresignRequestSchema, request))
+  return fromBinary(PrepareMwebPresignResponseSchema, unwrapEnvelope(await getLnd().walletKitPrepareMwebPresign(toArrayBuffer(bytes))))
 }
 
 // NeutrinoKit subserver

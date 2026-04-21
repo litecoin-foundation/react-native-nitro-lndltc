@@ -43,6 +43,7 @@ public:
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFundPsbt(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFinalizePsbt(const std::shared_ptr<ArrayBuffer>& data) override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportMwebScanKey(const std::shared_ptr<ArrayBuffer>& data) override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitPrepareMwebPresign(const std::shared_ptr<ArrayBuffer>& data) override;
 
     // NeutrinoKit subserver
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> neutrinoKitStatus(const std::shared_ptr<ArrayBuffer>& data) override;

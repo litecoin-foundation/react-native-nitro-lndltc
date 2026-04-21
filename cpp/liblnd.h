@@ -61,6 +61,7 @@ extern void walletKitSignPsbt(char* data, int length, CCallback callback);
 extern void walletKitFundPsbt(char* data, int length, CCallback callback);
 extern void walletKitFinalizePsbt(char* data, int length, CCallback callback);
 extern void walletKitImportMwebScanKey(char* data, int length, CCallback callback);
+extern void walletKitPrepareMwebPresign(char* data, int length, CCallback callback);
 
 // NeutrinoKit subserver
 extern void neutrinoKitStatus(char* data, int length, CCallback callback);

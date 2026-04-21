@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import {
   StyleSheet,
   Text,
+  TextInput,
   View,
   TouchableOpacity,
   ScrollView,
@@ -11,9 +12,86 @@ import {
   newAddress,
   getTransactions,
   subscribeTransactions,
+  walletKitPrepareMwebPresign,
   AddressType,
   type Subscription,
 } from 'react-native-nitro-lndltc'
+
+function hexToBytes(hex: string): Uint8Array {
+  const clean = hex.trim().replace(/^0x/, '').replace(/\s+/g, '')
+  if (clean.length % 2 !== 0) {
+    throw new Error('hex must have an even number of characters')
+  }
+  const out = new Uint8Array(clean.length / 2)
+  for (let i = 0; i < out.length; i++) {
+    const byte = parseInt(clean.slice(i * 2, i * 2 + 2), 16)
+    if (Number.isNaN(byte)) throw new Error('invalid hex')
+    out[i] = byte
+  }
+  return out
+}
+
+function bytesToHex(bytes: Uint8Array): string {
+  let s = ''
+  for (let i = 0; i < bytes.length; i++) {
+    s += bytes[i].toString(16).padStart(2, '0')
+  }
+  return s
+}
+
+const B64_ALPHA =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let s = ''
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b0 = bytes[i]
+    const b1 = bytes[i + 1] ?? 0
+    const b2 = bytes[i + 2] ?? 0
+    const chunk = (b0 << 16) | (b1 << 8) | b2
+    s += B64_ALPHA[(chunk >> 18) & 0x3f]
+    s += B64_ALPHA[(chunk >> 12) & 0x3f]
+    s += i + 1 < bytes.length ? B64_ALPHA[(chunk >> 6) & 0x3f] : '='
+    s += i + 2 < bytes.length ? B64_ALPHA[chunk & 0x3f] : '='
+  }
+  return s
+}
+
+function base64ToBytes(b64: string): Uint8Array {
+  const clean = b64.trim().replace(/\s+/g, '')
+  if (clean.length % 4 !== 0) throw new Error('invalid base64 length')
+  const pad = clean.endsWith('==') ? 2 : clean.endsWith('=') ? 1 : 0
+  const out = new Uint8Array((clean.length / 4) * 3 - pad)
+  let j = 0
+  for (let i = 0; i < clean.length; i += 4) {
+    const c0 = B64_ALPHA.indexOf(clean[i])
+    const c1 = B64_ALPHA.indexOf(clean[i + 1])
+    const c2 = clean[i + 2] === '=' ? 0 : B64_ALPHA.indexOf(clean[i + 2])
+    const c3 = clean[i + 3] === '=' ? 0 : B64_ALPHA.indexOf(clean[i + 3])
+    if (c0 < 0 || c1 < 0 || c2 < 0 || c3 < 0) {
+      throw new Error('invalid base64 character')
+    }
+    const chunk = (c0 << 18) | (c1 << 12) | (c2 << 6) | c3
+    if (j < out.length) out[j++] = (chunk >> 16) & 0xff
+    if (j < out.length) out[j++] = (chunk >> 8) & 0xff
+    if (j < out.length) out[j++] = chunk & 0xff
+  }
+  return out
+}
+
+const ENCODINGS = [
+  { id: 'hex', label: 'Hex' },
+  { id: 'base64', label: 'Base64' },
+] as const
+type Encoding = (typeof ENCODINGS)[number]['id']
+
+function encodeBytes(bytes: Uint8Array, encoding: Encoding): string {
+  return encoding === 'hex' ? bytesToHex(bytes) : bytesToBase64(bytes)
+}
+
+function decodeBytes(text: string, encoding: Encoding): Uint8Array {
+  return encoding === 'hex' ? hexToBytes(text) : base64ToBytes(text)
+}
 
 const ADDRESS_TYPES = [
   { type: AddressType.NESTED_PUBKEY_HASH, label: 'P2SH-P2WPKH' },
@@ -38,6 +116,9 @@ export default function WalletScreen() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [liveTxCount, setLiveTxCount] = useState(0)
   const subscriptionRef = useRef<Subscription | null>(null)
+  const [presignInput, setPresignInput] = useState('')
+  const [presignOutput, setPresignOutput] = useState<Uint8Array | null>(null)
+  const [presignEncoding, setPresignEncoding] = useState<Encoding>('hex')
 
   useEffect(() => {
     return () => {
@@ -86,6 +167,24 @@ export default function WalletScreen() {
     }
   }
 
+  const handlePrepareMwebPresign = async () => {
+    try {
+      setError(null)
+      setPresignOutput(null)
+      const fundedPsbt = decodeBytes(presignInput, presignEncoding)
+      const response = await walletKitPrepareMwebPresign({ fundedPsbt })
+      setPresignOutput(response.preparedPsbt)
+    } catch (e: any) {
+      setError(`PrepareMwebPresign: ${e.message}`)
+    }
+  }
+
+  const handleEncodingChange = (next: Encoding) => {
+    if (next === presignEncoding) return
+    setPresignEncoding(next)
+    setPresignInput('')
+  }
+
   const handleToggleSubscription = () => {
     if (subscriptionRef.current) {
       subscriptionRef.current.cancel()
@@ -116,7 +215,13 @@ export default function WalletScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="interactive"
+      automaticallyAdjustKeyboardInsets
+    >
       {error && (
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>{error}</Text>
@@ -217,6 +322,67 @@ export default function WalletScreen() {
           ))
         )}
       </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Prepare MWEB Presign</Text>
+        <Text style={styles.placeholder}>
+          Paste a funded PSBT. The daemon attaches the MWEB sender key and
+          stealth scalar presign fields so an external signer can complete
+          the inputs and kernels.
+        </Text>
+        <View style={styles.toggleRow}>
+          {ENCODINGS.map((enc) => (
+            <TouchableOpacity
+              key={enc.id}
+              style={[
+                styles.toggleButton,
+                enc.id === presignEncoding && styles.toggleButtonActive,
+              ]}
+              onPress={() => handleEncodingChange(enc.id)}
+            >
+              <Text
+                style={[
+                  styles.toggleText,
+                  enc.id === presignEncoding && styles.toggleTextActive,
+                ]}
+              >
+                {enc.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <TextInput
+          style={styles.psbtInput}
+          value={presignInput}
+          onChangeText={setPresignInput}
+          placeholder={`funded psbt (${presignEncoding})`}
+          autoCapitalize="none"
+          autoCorrect={false}
+          multiline
+        />
+        <TouchableOpacity
+          style={[
+            styles.button,
+            !presignInput.trim() && styles.buttonDisabled,
+          ]}
+          onPress={handlePrepareMwebPresign}
+          disabled={!presignInput.trim()}
+        >
+          <Text style={styles.buttonText}>Prepare Presign</Text>
+        </TouchableOpacity>
+        {presignOutput !== null && (
+          <>
+            <Text style={styles.rowLabel}>
+              Prepared PSBT ({presignEncoding}) — {presignOutput.length} bytes
+            </Text>
+            <Text style={styles.address} selectable>
+              {presignOutput.length > 0
+                ? encodeBytes(presignOutput, presignEncoding)
+                : '(empty)'}
+            </Text>
+          </>
+        )}
+      </View>
     </ScrollView>
   )
 }
@@ -282,7 +448,18 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
   },
+  buttonDisabled: { backgroundColor: '#9aa8c3' },
   dangerButton: { backgroundColor: '#c0392b' },
+  psbtInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 6,
+    padding: 8,
+    minHeight: 80,
+    fontSize: 12,
+    fontFamily: 'monospace',
+    textAlignVertical: 'top',
+  },
   buttonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
   buttonRow: { flexDirection: 'row', gap: 8 },
   halfButton: { flex: 1 },

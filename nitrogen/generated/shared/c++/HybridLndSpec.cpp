@@ -40,6 +40,7 @@ namespace margelo::nitro::nitrolndltc {
       prototype.registerHybridMethod("walletKitFundPsbt", &HybridLndSpec::walletKitFundPsbt);
       prototype.registerHybridMethod("walletKitFinalizePsbt", &HybridLndSpec::walletKitFinalizePsbt);
       prototype.registerHybridMethod("walletKitImportMwebScanKey", &HybridLndSpec::walletKitImportMwebScanKey);
+      prototype.registerHybridMethod("walletKitPrepareMwebPresign", &HybridLndSpec::walletKitPrepareMwebPresign);
       prototype.registerHybridMethod("neutrinoKitStatus", &HybridLndSpec::neutrinoKitStatus);
       prototype.registerHybridMethod("subscribeState", &HybridLndSpec::subscribeState);
       prototype.registerHybridMethod("subscribeTransactions", &HybridLndSpec::subscribeTransactions);

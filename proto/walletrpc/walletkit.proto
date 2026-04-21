@@ -321,6 +321,17 @@ service WalletKit {
     unlock/release any locked UTXOs in case of an error in this method.
     */
     rpc FinalizePsbt (FinalizePsbtRequest) returns (FinalizePsbtResponse);
+
+    /*
+    PrepareMwebPresign signs every unsigned MWEB output in the given PSBT and
+    attaches the generated sender key as a proprietary presign field on that
+    output. For every unsigned kernel with the stealth-excess feature bit, a
+    fresh 32-byte stealth scalar is also attached as a proprietary presign
+    field. Inputs and kernels remain unsigned so an external signer can
+    complete them.
+    */
+    rpc PrepareMwebPresign (PrepareMwebPresignRequest)
+        returns (PrepareMwebPresignResponse);
 }
 
 message ListUnspentRequest {
@@ -1311,6 +1322,20 @@ message FinalizePsbtResponse {
 
     // The fully signed and finalized transaction in the raw wire format.
     bytes raw_final_tx = 2;
+}
+
+message PrepareMwebPresignRequest {
+    /*
+    The PSBT to attach MWEB presign fields to. Unsigned MWEB outputs are
+    signed and gain a sender key presign field; unsigned kernels with the
+    stealth-excess feature bit gain a stealth scalar presign field.
+    */
+    bytes funded_psbt = 1;
+}
+
+message PrepareMwebPresignResponse {
+    // The PSBT with MWEB presign fields attached.
+    bytes prepared_psbt = 1;
 }
 
 message ListLeasesRequest {

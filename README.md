@@ -138,6 +138,7 @@ import {
   walletKitFundPsbt,
   walletKitFinalizePsbt,
   walletKitImportMwebScanKey,
+  walletKitPrepareMwebPresign,
 } from 'react-native-nitro-lndltc'
 ```
 
@@ -196,6 +197,7 @@ import {
 | `walletKitFundPsbt(request)` | Create and fund a PSBT |
 | `walletKitFinalizePsbt(request)` | Finalize a PSBT into a broadcast-ready transaction |
 | `walletKitImportMwebScanKey(request)` | Import an MWEB scan key for HW wallet integration |
+| `walletKitPrepareMwebPresign(request)` | Attach MWEB presign fields (sender key + stealth scalar) to a funded PSBT for an external signer |
 
 ### Types
 

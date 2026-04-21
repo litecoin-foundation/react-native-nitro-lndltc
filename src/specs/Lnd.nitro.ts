@@ -51,6 +51,7 @@ export interface Lnd extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   walletKitFundPsbt(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitFinalizePsbt(data: ArrayBuffer): Promise<ArrayBuffer>
   walletKitImportMwebScanKey(data: ArrayBuffer): Promise<ArrayBuffer>
+  walletKitPrepareMwebPresign(data: ArrayBuffer): Promise<ArrayBuffer>
 
   // NeutrinoKit subserver
   neutrinoKitStatus(data: ArrayBuffer): Promise<ArrayBuffer>

@@ -80,6 +80,7 @@ namespace margelo::nitro::nitrolndltc {
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFundPsbt(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitFinalizePsbt(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitImportMwebScanKey(const std::shared_ptr<ArrayBuffer>& data) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> walletKitPrepareMwebPresign(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> neutrinoKitStatus(const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::shared_ptr<HybridSubscriptionSpec> subscribeState(const std::shared_ptr<ArrayBuffer>& data, const std::function<void(const std::shared_ptr<ArrayBuffer>& /* data */)>& onResponse, const std::function<void(const std::string& /* error */)>& onError) = 0;
       virtual std::shared_ptr<HybridSubscriptionSpec> subscribeTransactions(const std::shared_ptr<ArrayBuffer>& data, const std::function<void(const std::shared_ptr<ArrayBuffer>& /* data */)>& onResponse, const std::function<void(const std::string& /* error */)>& onError) = 0;
